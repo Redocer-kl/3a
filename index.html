@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Таймлайн — Наши воспоминания</title>
+  <style>
+    :root{
+      --bg:#f3dff6;
+      --card:rgb(229, 190, 236);
+      --muted:#5a5e69;
+      --accent:#6fa18c; /* pastel green */
+      --accent-2:#FFDDE3; /* pastel pink */
+      --line:#E8EAF6;
+      --shadow: 0 6px 18px rgba(27,31,44,0.08);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,var(--bg),#FEFBFF);
+      color:#21354A;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:20px;
+    }
+
+    /* Container */
+    .wrap{
+      max-width:520px;
+      margin:0 auto;
+      background:transparent;
+    }
+
+    header{
+      display:flex;align-items:center;gap:12px;margin-bottom:12px
+    }
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px}
+    h1{font-size:18px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    /* Timeline */
+    .timeline{
+      position:relative;
+      padding:18px 6px 60px;
+    }
+
+    /* central vertical line */
+    .timeline::before{
+      content:'';position:absolute;left:50%;transform:translateX(-50%);top:0;height:100%;width:4px;background:var(--line);border-radius:6px;
+    }
+
+    .event{
+      position:relative;
+      width:calc(50% - 28px);
+      margin:18px 0;
+      padding:12px;
+      background:var(--card);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      transition:transform .28s ease, box-shadow .28s ease;
+    }
+    .event:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(27,31,44,0.12)}
+
+    .event .date{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .event h3{margin:0 0 8px;font-size:15px}
+    .event p{margin:0;font-size:13px;color:#496073;line-height:1.35}
+
+    /* left / right */
+    .event.left{left:0;margin-right:calc(50% + 14px)}
+    .event.right{left:50%;margin-left:14px}
+    .logo {
+        padding: 5px;
+    }
+    /* node dot */
+    .node{
+      position:absolute;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:linear-gradient(180deg,var(--accent),var(--accent-2));box-shadow:0 6px 18px rgba(199,231,217,0.45);border:3px solid white;top:24px;
+    }
+
+    /* connectors */
+    .event.left::after{
+      content:'';position:absolute;right:-16px;top:26px;width:22px;height:4px;background:linear-gradient(90deg,var(--line),transparent);border-radius:4px;transform-origin:left center;
+    }
+    .event.right::after{
+      content:'';position:absolute;left:-16px;top:26px;width:22px;height:4px;background:linear-gradient(270deg,var(--line),transparent);border-radius:4px;transform-origin:right center;
+    }
+
+    /* image */
+    .ev-img{width:100%;height:200px;border-radius:10px;object-fit:cover;margin-top:10px}
+
+    /* compact for small screens */
+    @media (max-width:560px){
+      .wrap{padding:0 6px}
+      .timeline::before{left:28px}
+      .event{width:100%;margin-left:56px;margin-right:12px}
+      .event.right,.event.left{left:0}
+      .event.left::after,.event.right::after{display:none}
+      .node{left:28px}
+    }
+
+    /* modal/detail */
+    .detail{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(12,16,24,0.45);z-index:60;padding:24px
+    }
+    .detail.show{display:flex}
+    .detail-card{width:100%;max-width:560px;background:var(--card);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+    .detail-card img{width:100%;height:300px;object-fit:cover;border-radius:10px}
+    .detail-card h2{margin:12px 0 8px}
+    .close-btn{position:absolute;right:18px;top:18px;border:none;background:transparent;font-size:22px;color:var(--muted)}
+
+    /* small helper */
+    .muted{color:var(--muted);font-size:12px;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">❤︎</div>
+      <div>
+        <h1>3 года вместе</h1>
+        <p class="lead">3 года - это очень большой срок. Я рад, что ты стала частью моей жизни, и что я стал частью твоей. Таня, я люблю тебя, и хочу чтобы мы всегда были вместе)</p>
+      </div>
+    </header>
+
+    <main class="timeline" id="timeline">
+
+      <!-- Example event 1 (left) -->
+      <div class="node" style="top:28px;"></div>
+      <article class="event left" data-title="Признание" data-date="7 октября 2022" data-img="images/date1.jpg" data-text="Мы смущенно покатались на колесе, а потом признались друг другу в сообщении <3">
+        <div class="date">7 октября 2022</div>
+        <h3>Признание</h3>
+        <p>Мы смущенно покатались на колесе, а потом признались друг другу в сообщении <3</p>
+        <img class="ev-img" src="images/date1.jpg" alt="Первое свидание (замените картинку)">
+      </article>
+
+      <!-- node auto placed near next event -->
+      <div class="node" style="top:220px;"></div>
+      <article class="event left" data-title="Первое свидание" data-date="14 ноября 2022" data-img="images/date2.jpg" data-text="Первый поход в кафе - я очень нервничал :(">
+        <div class="date">14 ноября 2022</div>
+        <h3>Первое свидание</h3>
+        <p>Первый поход в кафе - я очень нервничал :(</p>
+        <img class="ev-img" src="images/date2.jpg" alt="Поездка (замените картинку)">
+      </article>
+
+      <div class="node" style="top:420px;"></div>
+      <article class="event left" data-title="Каток" data-date="21 декабря 2022" data-img="images/date3.jpg" data-text="Мы мило катались за ручку. Жутко замерзли, но было весело">
+        <div class="date">21 декабря 2022</div>
+        <h3>Каток</h3>
+        <p>Мы мило катались за ручку. Жутко замерзли, но было весело</p>
+        <img class="ev-img" src="images/date3.jpg" alt="Праздник (замените картинку)">
+      </article>
+
+      <div class="node" style="top:620px;"></div>
+      <article class="event left" data-title="Милая прогулка" data-date="17 января 2023" data-img="images/date4.jpg" data-text="Мы погуляли, сходили в кафе и сделали кучу милых фоток">
+        <div class="date">17 января 2023</div>
+        <h3>Милая прогулка</h3>
+        <p>Мы погуляли, сходили в кафе и сделали кучу милых фоток</p>
+        <img class="ev-img" src="images/date4.jpg" alt="Праздник (замените картинку)">
+      </article>
+
+      <div class="node" style="top:820px;"></div>
+      <article class="event left" data-title="День святого Валентина" data-date="14 февраля 2023" data-img="images/date5.jpg" data-text="Я нашел нам прикольное кафе, где мы влюбленно смотрели на друг друга <3">
+        <div class="date">14 февраля 2023</div>
+        <h3>День святого Валентина</h3>
+        <p>Я нашел нам прикольное кафе, где мы влюбленно смотрели на друг друга <3</p>
+        <img class="ev-img" src="images/date5.jpg" alt="Праздник (замените картинку)">
+      </article>
+
+      <div class="node" style="top:1020px;"></div>
+      <article class="event left" data-title="Нам полгода!" data-date="7 апреля 2023" data-img="images/date6.jpg" data-text="Мы подарили подарки друг-другу, и красили футболки">
+        <div class="date">7 апреля 2023</div>
+        <h3>Нам полгода!</h3>
+        <p>Мы подарили подарки друг-другу, и красили футболки</p>
+        <img class="ev-img" src="images/date6.jpg" alt="Праздник (замените картинку)">
+      </article>
+      <div class="node" style="top:1220px;"></div>
+      <article class="event left" data-title="ПОЕЗДА!" data-date="13 мая 2023" data-img="images/date7.jpg" data-text="Обожаю смотреть на наши смешные фотки из поездов">
+        <div class="date">13 мая 2023</div>
+        <h3>ПОЕЗДА!</h3>
+        <p>Обожаю смотреть на наши смешные фотки из поездов</p>
+        <img class="ev-img" src="images/date7.jpg" alt="Праздник (замените картинку)">
+      </article>
+
+      <!-- More sample events can be copied below -->
+      <div class="node" style="top:1420px;"></div>
+      <article class="event left" data-title="ПОЕЗДА!" data-date="13 мая 2023" data-img="images/date7.jpg" data-text="Обожаю смотреть на наши смешные фотки из поездов">
+        <div class="date">13 мая 2023</div>
+        <h3>ПОЕЗДА!</h3>
+        <p>Обожаю смотреть на наши смешные фотки из поездов</p>
+        <img class="ev-img" src="images/date7.jpg" alt="Праздник (замените картинку)">
+      </article>
+      <div class="node" style="top:1620px;"></div>
+      <article class="event left" data-title="Мое любимое свидание" data-date="1 июня 2023" data-img="images/date8.jpg" data-text="Мы сходили в филармонию, а затем пошли гулять и фоткатся. Тебе очень идет пиджак)">
+        <div class="date">1 июня 2023</div>
+        <h3>Мое любимое свидание</h3>
+        <p>Мы сходили в филармонию, а затем пошли гулять и фоткатся. Тебе очень идет пиджак)</p>
+        <img class="ev-img" src="images/date8.jpg" alt="Праздник (замените картинку)">
+      </article>
+
+      <div class="event">
+        <p>
+            Позже добавлю тут еще остальное.....
+        </p>
+      </div>
+      
+    </main>
+
+  </div>
+
+  <!-- Detail modal -->
+  <div class="detail" id="detail">
+    <div class="detail-card" id="detailCard">
+      <button class="close-btn" id="closeBtn">✕</button>
+      <img id="detailImg" src="" alt="">
+      <h2 id="detailTitle"></h2>
+      <div class="muted" id="detailDate"></div>
+      <p id="detailText"></p>
+    </div>
+  </div>
+
+  <script>
+    // Simple interaction: open modal when tapping an event
+    (function(){
+      const events = document.querySelectorAll('.event');
+      const detail = document.getElementById('detail');
+      const detailImg = document.getElementById('detailImg');
+      const detailTitle = document.getElementById('detailTitle');
+      const detailDate = document.getElementById('detailDate');
+      const detailText = document.getElementById('detailText');
+      const closeBtn = document.getElementById('closeBtn');
+
+      events.forEach(ev=>{
+        ev.addEventListener('click', ()=>{
+          const title = ev.dataset.title || ev.querySelector('h3').innerText;
+          const date = ev.dataset.date || ev.querySelector('.date').innerText;
+          const img = ev.dataset.img || ev.querySelector('img').src;
+          const text = ev.dataset.text || ev.querySelector('p').innerText;
+
+          detailImg.src = img;
+          detailTitle.innerText = title;
+          detailDate.innerText = date;
+          detailText.innerText = text;
+
+          detail.classList.add('show');
+          // make sure mobile scroll is locked
+          document.body.style.overflow = 'hidden';
+        })
+      })
+
+      closeBtn.addEventListener('click', ()=>{
+        detail.classList.remove('show');
+        document.body.style.overflow = '';
+      })
+
+      // close by tapping overlay
+      detail.addEventListener('click', (e)=>{
+        if(e.target === detail){
+          detail.classList.remove('show');
+          document.body.style.overflow = '';
+        }
+      })
+
+      // small accessibility: keyboard close
+      window.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape'){
+          detail.classList.remove('show');
+          document.body.style.overflow = '';
+        }
+      })
+
+      // Optional: make timeline nodes match events (simple auto-placement)
+      function syncNodes(){
+        const nodes = document.querySelectorAll('.node');
+        const evs = document.querySelectorAll('.event');
+        for(let i=0;i<Math.min(nodes.length, evs.length); i++){
+          const r = evs[i].getBoundingClientRect();
+          const parentRect = document.getElementById('timeline').getBoundingClientRect();
+          const top = (r.top - parentRect.top) + (r.height*0.12);
+          nodes[i].style.top = Math.max(18, top) + 'px';
+        }
+      }
+      // run once after images load
+      window.addEventListener('load', ()=>{ setTimeout(syncNodes,120); });
+      window.addEventListener('resize', ()=>{ setTimeout(syncNodes,120); });
+
+    })();
+  </script>
+
+  <!--
+    Инструкция:
+    - Скопируйте этот файл как index.html в папку и создайте папку "images" рядом.
+    - Замените src в <img> на свои фотографии (именуйте как images/date1.jpg и т.д.).
+    - Чтобы добавить событие: скопируйте <article class="event ..."> блок и поменяйте content и data-* атрибуты.
+    - Настройки цветов — в :root (пастельные переменные). 
+  -->
+</body>
+</html>
